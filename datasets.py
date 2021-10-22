@@ -124,6 +124,10 @@ class FOODDataset(torch.utils.data.Dataset):
     def __init__(self, dataframe, *args, **kwargs):
         self.dataframe = dataframe
 
+        self.mean = (0.485, 0.456, 0.406)
+        self.std = (0.229, 0.224, 0.225)
+
+
     def __len__(self):
         return len(self.dataframe)
 
@@ -133,12 +137,15 @@ class FOODDataset(torch.utils.data.Dataset):
         #     torchvision.transforms.functional.to_tensor(Image.open(row["path"])), row['label']
         # )
         #print(row["path"])
-    
+
         img = Image.open(row["path"])
         img2 = img.resize((224,224), resample=0)
         #img2.save('/home/u20020067/Downloads/1.jpg')
+        
+        img3 = T.ToTensor()(img2)
 
-        out = T.ToTensor()(img2)
+        out = T.Normalize(mean=self.mean, std=self.std)(img3)
+
         #print(out.shape)
 
         #out = F.interpolate(img, size=224)  #The resize operation on tensor.
