@@ -139,12 +139,17 @@ class FOODDataset(torch.utils.data.Dataset):
         #print(row["path"])
 
         img = Image.open(row["path"])
-        img2 = img.resize((224,224), resample=0)
+
+        #img2 = img.resize((224,224), resample=0)
         #img2.save('/home/u20020067/Downloads/1.jpg')
         
-        img3 = T.ToTensor()(img2)
+        img2 = T.Resize(256)(img)
 
-        out = T.Normalize(mean=self.mean, std=self.std)(img3)
+        img3 = T.CenterCrop(224)(img2)
+
+        img4 = T.ToTensor()(img3)
+
+        out = T.Normalize(mean=self.mean, std=self.std)(img4)
 
         #print(out.shape)
 
