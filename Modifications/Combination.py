@@ -325,10 +325,9 @@ class MyModel(torch.nn.Module):
         transformer_out2 = self.transformer_mlp(transformer_out1)
         #print(transformer_out2.shape)
 
-        out1 = self.common(resnet_out2)
-        out2 = self.common(transformer_out2)
+        out = self.common(0.5*resnet_out2+0.5*transformer_out2)
 
-        return 0.7*out1 + 0.3*out2
+        return out
 
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')

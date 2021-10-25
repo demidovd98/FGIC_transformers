@@ -325,10 +325,9 @@ class MyModel(torch.nn.Module):
         transformer_out2 = self.transformer_mlp(transformer_out1)
         #print(transformer_out2.shape)
 
-        out1 = self.common(resnet_out2)
-        out2 = self.common(transformer_out2)
+        out = self.common(0.5*resnet_out2+0.5*transformer_out2)
 
-        return 0.5*(out1+out2)
+        return out
 
 class LabelSmoothingLoss(torch.nn.Module): 
     def __init__(self, classes=5, smoothing=0.0, dim=-1): 
