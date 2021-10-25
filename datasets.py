@@ -2,31 +2,16 @@
 
 from __future__ import print_function, division
 
-#import numpy as np # ?
-
 import torch
 import torch.nn.functional as F
-#import torch.nn as nn # ?
-#import torch.optim as optim # ?
-#from torch.optim import lr_scheduler # ?
+
 
 import torchvision
 import torchvision.transforms as T
-#from torchvision import datasets, models, transforms # ?
 
 from PIL import Image #for food dateset
 
 import scipy.io #for dogs dateset
-
-
-
-#import matplotlib.pyplot as plt # ?
-
-#import pandas as pd # ?
-
-#import time # ?
-#import os # ?
-#import copy # ?
 
 
 
@@ -108,8 +93,24 @@ class DOGDataset(torchvision.datasets.ImageFolder):
         super(DOGDataset, self).__init__(root=f"{image_root_path}Images", is_valid_file = self.is_valid_file,
                                          *args, **kwargs)
 
+        ## modify class index as we are going to concat to first dataset
+        self.class_to_idx = {class_: idx+200 for idx, class_ in enumerate(self.class_to_idx)}
+
+
     def is_valid_file(self, x):
         return self.split_info[(x[len(self.root) + 1:])] == self.split
+
+
+    def __getitem__(self, index):
+        path, target = self.imgs[index]
+        img = Image.open(os.path.join(path)).convert('RGB')
+        if self.transform is not None:
+            img = self.transform(img)
+        if self.target_transform is not None:
+            target = self.target_transform(target)
+            
+        ## modify target class index as we are going to concat to first dataset
+        return img, target + 200
 
     @staticmethod
     def get_file_content(file_path):
